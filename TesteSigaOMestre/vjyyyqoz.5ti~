@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Threading;/*Faz uma espera no codigo*/
+
+
+namespace TesteSigaOMestre
+{
+    public partial class Form1 : Form
+    {
+        List<string> sequenciaColor = new List<string>();
+        List<string> sequenciaJogador = new List<string>();
+        int listIndex,pontos;
+        const float brilho =0.7f;
+        string atualCor;
+        string[] cores = { "R", "G", "B", "Y" };
+        bool podeJogar;
+        Random rdn = new Random();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void mostrarCor(PictureBox pic, Color corAcessa, Color corApagada)
+        {
+            pic.BackColor = corAcessa;/*Acende*/ Application.DoEvents();
+            Thread.Sleep(850);/*Tempo para acender outra pic*/
+            pic.BackColor = corApagada;/*apagada*/
+        }
+
+        private void ProcuraCor(string tagPic)
+        {
+            foreach(var corEncontrada in Controls.OfType<PictureBox>())
+            {
+                if (corEncontrada.Tag.ToString() == tagPic)
+                {
+
+                    string tag = corEncontrada.Tag.ToString();
+
+                    Color piscar = ControlPaint.Light(corEncontrada.BackColor, brilho);
+                    mostrarCor(corEncontrada, piscar,corEncontrada.BackColor);
+
+
+                }
+            }
+        }
+
+        private void sortearCor()
+        {
+            atual
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

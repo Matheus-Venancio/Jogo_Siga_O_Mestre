@@ -1,0 +1,354 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Media;
+using System.Threading;/*Faz uma espera no codigo*/
+
+
+namespace TesteSigaOMestre
+{
+    public partial class Form1 : Form
+    {
+        List<string> sequenciaColor = new List<string>();
+        List<string> sequenciaJogador = new List<string>();
+        int[] sequencia = new int[6];
+        int listIndex,pontos;
+    
+        string atualCor;
+        string[] cores = { "R", "G", "B", "Y" };
+        bool podeJogar;
+        
+        Random rdn = new Random();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        
+        private void mostrarCor(PictureBox pic, Color corAcessa, Color corApagada)
+        {
+            pic.BackColor = corAcessa;/*Acende*/ Application.DoEvents();
+            Thread.Sleep(250);/*Tempo para acender outra pic*/
+            pic.BackColor = corApagada;/*apagada*/
+        }
+        /*public void acender(int cont)
+        {
+
+
+            if (cont < sequencia)
+            {
+                if (sequencia[cont] == 0)
+                {
+                    pictureBox2.Image = Properties.Resources.amarelo_aceso;
+                }
+                if (sequencia[cont] == 1)
+                {
+                    pictureBox4.Image = Properties.Resources.azul_aceso;
+                }
+                if (sequencia[cont] == 2)
+                {
+                    pictureBox1.Image = Properties.Resources.verde_aceso;
+                }
+                if (sequencia[cont] == 3)
+                {
+                    pictureBoxVe.Image = Properties.Resources.vermelho_aceso;
+                }
+            }
+            else
+            {
+                timerSeq.Stop();
+            }
+        }*/
+        private void ProcuraCor(string tagPic)
+        {
+            foreach(var corEncontrada in Controls.OfType<PictureBox>())
+            {
+                if (corEncontrada.Tag.ToString() == tagPic)
+                {
+
+                    string tag = corEncontrada.Tag.ToString();
+
+
+
+                    if (corEncontrada.Tag.ToString() == "R")
+                    {
+                        corEncontrada.Image = Properties.Resources.vermelho_aceso;
+                        timer1.Start();
+                    }
+                    else
+                    {
+                        if (corEncontrada.Tag.ToString() == "G")
+                        {
+                            corEncontrada.Image = Properties.Resources.verde_aceso;
+                            timer1.Start();
+                        }
+                        else
+                        {
+                            if (corEncontrada.Tag.ToString() == "Y")
+                            {
+                                corEncontrada.Image = Properties.Resources.amarelo_aceso;
+                                timer1.Start();
+
+                            }
+                            else
+                            {
+                                if (corEncontrada.Tag.ToString() == "B")
+                                {
+                                    corEncontrada.Image = Properties.Resources.azul_aceso;
+                                    timer1.Start();
+
+
+                                }
+                            }
+                        }
+                    }
+
+                    
+                    //Color piscar = ControlPaint.Light(corEncontrada.BackColor, brilho);
+                    //mostrarCor(corEncontrada, piscar,corEncontrada.BackColor);
+
+
+                }
+               
+            }
+        }
+        private void apagar(string tagPic)
+        {
+            foreach (var corEncontrada in Controls.OfType<PictureBox>())
+            {
+                if (corEncontrada.Tag.ToString() == tagPic)
+                {
+
+                    string tag = corEncontrada.Tag.ToString();
+
+
+
+                    if (corEncontrada.Tag.ToString() == "R")
+                    {
+                        
+                        corEncontrada.Image = Properties.Resources.vermelho;
+                        timer1.Stop();
+                    }
+                    else
+                    {
+                        if (corEncontrada.Tag.ToString() == "G")
+                        {
+                           
+                            corEncontrada.Image = Properties.Resources.verde;
+                            timer1.Stop();
+                        }
+                        else
+                        {
+                            if (corEncontrada.Tag.ToString() == "Y")
+                            {
+                                
+                                corEncontrada.Image = Properties.Resources.amarelo;
+                                timer1.Stop();
+                            }
+                            else
+                            {
+                                if (corEncontrada.Tag.ToString() == "B")
+                                {
+                                   
+                                    corEncontrada.Image = Properties.Resources.azul;
+                                    timer1.Stop();
+                                }
+                            }
+                        }
+                    }
+
+
+                    //Color piscar = ControlPaint.Light(corEncontrada.BackColor, brilho);
+                    //mostrarCor(corEncontrada, piscar,corEncontrada.BackColor);
+
+
+                }
+                Thread.Sleep(250);
+                
+            }
+        }
+
+        private void sortearCor()
+        {
+            /**Mostra a cor e da pra clicar**/
+            atualCor = cores[rdn.Next(0, cores.Length)];
+            sequenciaColor.Add(atualCor);
+
+            foreach(var cor in sequenciaColor)
+            {
+                Application.DoEvents();
+                Thread.Sleep(250);
+                ProcuraCor(cor);
+                
+            }
+
+            podeJogar = true;
+        }
+
+        private void clique(object sender, EventArgs e)
+        {
+            PictureBox pb = (PictureBox) sender;
+
+            if (podeJogar)
+            {
+                podeJogar = false;
+                atualCor = pb.Tag.ToString();
+                sequenciaJogador.Add(atualCor);
+                ProcuraCor(atualCor);
+
+                if (sequenciaJogador[listIndex] == sequenciaColor[listIndex]){
+
+                    pontos++;lblPontos.Text = "pontos: " + pontos.ToString();
+                    listIndex++;
+                    checar();
+                }
+                else
+                {
+                    MessageBox.Show("Você errou a sequencia!  Fim de jogo");
+                }
+            }
+        }
+
+
+        private void checar()
+        {
+            if (listIndex == sequenciaColor.Count)
+            {
+                listIndex = 0;
+                sequenciaJogador.Clear();/**limpa quando for dnv**/
+                sortearCor();
+            }
+            else
+            {
+                podeJogar = true;
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            foreach (var cor in sequenciaColor)
+            {
+
+
+                apagar(cor);
+            }
+        }
+
+        private void opcoes(object sender, EventArgs e)
+        {
+            ToolStripMenuItem menu = (ToolStripMenuItem)sender;
+
+            switch (menu.Text)
+            {
+
+                case "Iniciar": pontos = 0; lblPontos.Text = "pontos: "; sequenciaJogador.Clear();
+                    sequenciaColor.Clear();
+                    podeJogar = false;
+                    listIndex = 0;
+                    sortearCor();
+                    break;
+
+                case "Sair": Application.Exit();
+
+
+                    break;
+            }
+        }
+    }
+}
+
+
+/**
+
+namespace SigaOMestre
+{
+    public partial class Form1 : Form
+    {
+        int[] sequencia = new int[6];
+        int cont = 0;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+     
+            
+            cont = 0;
+
+            Random randon = new Random();
+
+            
+
+            *//*for(int seq=0; seq < sequencia.Length; seq++)
+            {
+                sequencia[seq] = randon.Next(4);
+
+                
+            }
+
+            acender(cont);
+            timerSeq.Start();
+
+        }
+
+        public void acender(int cont)
+        {
+            if (cont < sequencia.Length)
+            {
+                if (sequencia[cont] == 0)
+                {
+                    pictureBox2.Image = Properties.Resources.amarelo_aceso;
+                }
+                if (sequencia[cont] == 1)
+                {
+                    pictureBox4.Image = Properties.Resources.azul_aceso;
+                }
+                if (sequencia[cont] == 2)
+                {
+                    pictureBox1.Image = Properties.Resources.verde_aceso;
+                }
+                if (sequencia[cont] == 3)
+                {
+                    pictureBoxVe.Image = Properties.Resources.vermelho_aceso;
+                }
+            }
+            else
+            {
+                timerSeq.Stop();
+            }
+        }
+        
+        private void tempoSequencia(object sender, EventArgs e)
+        {
+
+            if (sequencia[cont] == 0)
+            {
+                pictureBox2.Image = Properties.Resources.amarelo;
+            }
+            if (sequencia[cont] == 1)
+            {
+                pictureBox4.Image = Properties.Resources.azul;
+            }
+            if (sequencia[cont] == 2)
+            {
+                pictureBox1.Image = Properties.Resources.verde;
+            }
+            if (sequencia[cont] == 3)
+            {
+                pictureBoxVe.Image = Properties.Resources.vermelho;
+            }
+
+            cont++;
+            acender(cont);
+        }
+    }
+}
+**/
